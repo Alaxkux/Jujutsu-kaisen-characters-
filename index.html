@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JJK — Character Archive</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Noto+Serif+JP:wght@400;700;900&family=Oswald:wght@400;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --black:#06060a; --white:#f2f0ee; --gold:#c9940a;
+  --font-display:'Cinzel Decorative',serif;
+  --font-jp:'Noto Serif JP',serif;
+  --font-ui:'Oswald',sans-serif;
+  --font-body:'Rajdhani',sans-serif;
+}
+html,body{width:100%;height:100%;background:var(--black);overflow:hidden;}
+body::after{content:'';position:fixed;inset:0;z-index:1000;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");opacity:0.3;}
+
+/* NAVBAR */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:56px;display:flex;align-items:center;padding:0 28px;gap:24px;background:linear-gradient(180deg,rgba(0,0,0,0.9),transparent);border-bottom:1px solid rgba(255,255,255,0.04);}
+.nav-logo{font-family:var(--font-jp);font-size:1.1rem;font-weight:900;color:var(--white);letter-spacing:0.15em;white-space:nowrap;}
+.nav-links{display:flex;gap:26px;margin-left:8px;}
+.nav-links a{font-family:var(--font-ui);font-size:0.7rem;font-weight:600;letter-spacing:0.35em;color:rgba(255,255,255,0.45);text-decoration:none;text-transform:uppercase;transition:color 0.3s;}
+.nav-links a:hover,.nav-links a.active{color:var(--white);}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:14px;}
+.nav-signup{font-family:var(--font-ui);font-size:0.6rem;font-weight:700;letter-spacing:0.4em;color:var(--white);border:1px solid rgba(255,255,255,0.18);padding:6px 16px;text-transform:uppercase;cursor:pointer;background:transparent;transition:all 0.3s;}
+.nav-search{font-family:var(--font-ui);font-size:0.6rem;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.45);padding:5px 12px;letter-spacing:0.2em;width:130px;outline:none;transition:border 0.3s;}
+.hamburger{display:flex;flex-direction:column;gap:4px;cursor:pointer;padding:4px;}
+.hamburger span{width:18px;height:1px;background:rgba(255,255,255,0.55);display:block;}
+
+/* MARQUEE */
+.marquee-bar{position:fixed;top:56px;left:0;right:0;z-index:499;height:18px;overflow:hidden;background:rgba(0,0,0,0.35);border-bottom:1px solid rgba(255,255,255,0.03);display:flex;align-items:center;}
+.marquee-inner{display:flex;animation:marqueeScroll 35s linear infinite;white-space:nowrap;}
+.marquee-inner span{font-family:var(--font-jp);font-size:0.48rem;color:rgba(255,255,255,0.1);letter-spacing:0.4em;padding:0 28px;}
+@keyframes marqueeScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* SCENE */
+#scene{position:fixed;inset:0;}
+.char-page{position:absolute;inset:0;display:flex;align-items:center;opacity:0;pointer-events:none;transition:opacity 0.5s ease;}
+.char-page.active{opacity:1;pointer-events:all;}
+
+/* BG */
+.char-bg{position:absolute;inset:0;}
+.char-bg-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,0.75) 0%,rgba(0,0,0,0.15) 50%,rgba(0,0,0,0.65) 100%);}
+.aura-container{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+
+/* Aura particles */
+.ap{position:absolute;border-radius:50%;animation:apFloat linear infinite;}
+@keyframes apFloat{0%{transform:translateY(0) translateX(0) scale(1);opacity:0}10%{opacity:1}90%{opacity:0.5}100%{transform:translateY(-110vh) translateX(var(--dx)) scale(0.3);opacity:0}}
+
+/* Swirls */
+.swirl{position:absolute;border-radius:50%;border:1px solid;animation:swirlSpin linear infinite,swirlPulse ease-in-out infinite alternate;}
+@keyframes swirlSpin{to{transform:rotate(360deg)}}
+@keyframes swirlPulse{from{opacity:0.08}to{opacity:0.35}}
+
+/* Streaks */
+.streak{position:absolute;height:1px;pointer-events:none;animation:streakFly ease-out forwards;opacity:0;}
+@keyframes streakFly{0%{opacity:0;transform:scaleX(0) translateX(-100%)}15%{opacity:1}100%{opacity:0;transform:scaleX(1) translateX(60%)}}
+
+/* Scan frame */
+.scan-frame{position:absolute;animation:scanPulse 2.8s ease-in-out infinite;}
+@keyframes scanPulse{0%,100%{opacity:0.25;transform:translateX(-50%) scale(1)}50%{opacity:0.6;transform:translateX(-50%) scale(1.012)}}
+.sc{position:absolute;width:14px;height:14px;}
+.sc::before,.sc::after{content:'';position:absolute;background:currentColor;}
+.sc::before{width:100%;height:1.5px;top:0;left:0;}
+.sc::after{width:1.5px;height:100%;top:0;left:0;}
+.sc.br{transform:scale(-1)}.sc.bl{transform:scaleX(-1)}.sc.tr{transform:scaleY(-1)}
+
+/* Glow behind char */
+.char-glow{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:400px;height:500px;pointer-events:none;z-index:1;animation:glowBreath 4s ease-in-out infinite;}
+@keyframes glowBreath{0%,100%{opacity:0.5;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.12)}}
+
+/* BIG BG KANJI */
+.bg-kanji{position:absolute;font-family:var(--font-jp);font-size:clamp(260px,36vw,480px);font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,0.022);user-select:none;pointer-events:none;top:50%;left:60%;transform:translate(-50%,-50%);animation:kanjiDrift 10s ease-in-out infinite;}
+@keyframes kanjiDrift{0%,100%{transform:translate(-50%,-50%) scale(1) rotate(-1deg)}50%{transform:translate(-50%,-50%) scale(1.04) rotate(1deg)}}
+
+/* LAYOUT */
+.layout{position:relative;z-index:10;width:100%;height:100%;display:grid;grid-template-columns:1fr 340px 1fr;grid-template-rows:74px 1fr 78px;padding:0;}
+
+/* LEFT */
+.lp{grid-column:1;grid-row:2;display:flex;flex-direction:column;justify-content:center;padding:0 32px 0 48px;position:relative;z-index:10;}
+.grade-badge{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.grade-icon{font-size:0.9rem;color:var(--gold);}
+.grade-text{font-family:var(--font-ui);font-size:0.58rem;font-weight:700;letter-spacing:0.45em;text-transform:uppercase;color:var(--gold);}
+.char-title{font-family:var(--font-jp);font-size:clamp(0.65rem,1.3vw,0.9rem);font-weight:400;color:rgba(255,255,255,0.55);letter-spacing:0.12em;margin-bottom:5px;}
+.char-name-en{font-family:var(--font-display);font-size:clamp(1.5rem,3vw,2.6rem);font-weight:900;color:var(--white);line-height:1.05;letter-spacing:0.02em;margin-bottom:4px;}
+.char-name-jp{font-family:var(--font-jp);font-size:clamp(0.85rem,1.8vw,1.2rem);font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:0.28em;margin-bottom:22px;}
+.divider-line{width:45px;height:1px;margin-bottom:18px;}
+.char-bio{font-family:var(--font-body);font-size:clamp(0.65rem,1vw,0.82rem);color:rgba(255,255,255,0.5);line-height:1.8;max-width:320px;font-weight:400;letter-spacing:0.03em;}
+
+/* CENTER */
+.cp{grid-column:1/-1;grid-row:1/-1;display:flex;align-items:flex-end;justify-content:center;position:absolute;inset:0;z-index:1;overflow:hidden;}
+.char-art-wrap{position:relative;width:100%;height:100%;display:flex;align-items:flex-end;justify-content:center;}
+.char-art-placeholder{height:78%;width:280px;display:flex;align-items:center;justify-content:center;font-family:var(--font-jp);font-size:7rem;font-weight:900;user-select:none;animation:charHover 5s ease-in-out infinite;position:relative;z-index:2;}
+.char-art-img{
+  height:92%;max-height:92vh;width:auto;
+  object-fit:contain;object-position:bottom center;
+  position:relative;z-index:2;
+  animation:charHover 5s ease-in-out infinite;
+  filter:drop-shadow(0 0 40px var(--art-glow,rgba(255,255,255,0.3))) drop-shadow(0 0 80px var(--art-glow2,rgba(255,255,255,0.15))) brightness(1.08) saturate(1.2) contrast(1.1);
+  margin-left: -150px;
+}
+/* Left gradient overlay so left text stays readable */
+.cp::before{
+  content:'';position:absolute;inset:0;z-index:3;pointer-events:none;
+  background:linear-gradient(
+    90deg,
+    rgba(0,0,0,0.75) 0%,
+    rgba(0,0,0,0.45) 22%,
+    transparent 42%,
+    transparent 58%,
+    rgba(0,0,0,0.45) 78%,
+    rgba(0,0,0,0.75) 100%
+  );
+}
+/* Bottom fade */
+.cp::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:30%;z-index:3;pointer-events:none;
+  background:linear-gradient(0deg,var(--page-bg,#050608) 0%,rgba(0,0,0,0) 100%);
+}
+@keyframes charHover{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-10px) scale(1.006)}}
+
+/* RIGHT */
+.rp{grid-column:3;grid-row:2;display:flex;flex-direction:column;justify-content:center;padding:0 48px 0 16px;gap:14px;position:relative;z-index:10; margin-right: -10px;}
+.about-header{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
+.about-dot{width:7px;height:7px;border-radius:50%;}
+.about-title{font-family:var(--font-display);font-size:clamp(0.9rem,1.8vw,1.3rem);font-weight:900;color:var(--white);letter-spacing:0.1em;}
+.stat-block{display:flex;flex-direction:column;gap:2px;}
+.stat-label{font-family:var(--font-ui);font-size:0.48rem;font-weight:700;letter-spacing:0.5em;color:var(--gold);text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,0.05);padding-bottom:2px;margin-bottom:2px;}
+.stat-value{font-family:var(--font-body);font-size:clamp(0.6rem,0.95vw,0.78rem);color:rgba(255,255,255,0.6);line-height:1.45;font-weight:500;letter-spacing:0.04em;}
+
+/* CORNER DECO */
+.pc{position:absolute;z-index:20;width:38px;height:38px;opacity:0.4;}
+.pc::before,.pc::after{content:'';position:absolute;background:var(--gold);}
+.pc::before{width:100%;height:1px;top:0;left:0;}
+.pc::after{width:1px;height:100%;top:0;left:0;}
+.pc.tl{top:68px;left:18px;}.pc.tr{top:68px;right:18px;transform:scaleX(-1);}
+.pc.bl{bottom:82px;left:18px;transform:scaleY(-1);}.pc.br{bottom:82px;right:18px;transform:scale(-1);}
+
+/* CHAR TABS */
+.char-tabs{position:fixed;bottom:0;left:0;right:0;z-index:500;display:flex;justify-content:center;background:linear-gradient(0deg,rgba(0,0,0,0.95),transparent);padding:12px 0 16px;}
+.char-tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 20px;cursor:pointer;position:relative;border:none;background:transparent;transition:all 0.3s;}
+.char-tab::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:0;height:2px;transition:width 0.4s cubic-bezier(0.16,1,0.3,1);}
+.char-tab.active::after{width:75%;}
+.tab-name{font-family:var(--font-ui);font-size:0.56rem;font-weight:700;letter-spacing:0.3em;color:rgba(255,255,255,0.3);text-transform:uppercase;transition:color 0.3s;}
+.tab-jp{font-family:var(--font-jp);font-size:0.6rem;color:rgba(255,255,255,0.18);transition:color 0.3s;}
+.char-tab.active .tab-name{color:var(--white);}
+.char-tab:hover .tab-name{color:rgba(255,255,255,0.65);}
+
+/* TRANSITION OVERLAY */
+#to{position:fixed;inset:0;z-index:800;background:rgba(0,0,0,0);pointer-events:none;transition:background 0.15s ease;}
+#to.flash{background:rgba(0,0,0,0.75);}
+
+/* ── CHARACTER THEMES ── */
+/* GOJO */
+[data-char="gojo"] .char-bg{background:radial-gradient(ellipse 80% 90% at 55% 55%,#091828 0%,#050c18 45%,#060608 100%);}
+[data-char="gojo"] .char-name-en{text-shadow:2px 2px 0 rgba(0,0,0,0.9),0 0 45px rgba(0,207,255,0.5);}
+[data-char="gojo"] .char-glow{background:radial-gradient(ellipse at bottom,rgba(0,100,180,0.3) 0%,transparent 70%);}
+[data-char="gojo"] .about-dot{background:#00cfff;box-shadow:0 0 10px rgba(0,207,255,0.6);}
+[data-char="gojo"] .char-tab.active::after{background:#00cfff;}
+[data-char="gojo"] .tab-jp.active-jp{color:#00cfff;}
+[data-char="gojo"] .divider-line{background:linear-gradient(90deg,#00cfff,transparent);}
+[data-char="gojo"] .stat-label{color:#00aacc;}
+[data-char="gojo"] .char-art-placeholder{color:rgba(0,207,255,0.06);}
+
+/* ITADORI */
+[data-char="itadori"] .char-bg{background:radial-gradient(ellipse 80% 90% at 55% 55%,#1e0900 0%,#0d0400 45%,#060608 100%);}
+[data-char="itadori"] .char-name-en{text-shadow:2px 2px 0 rgba(0,0,0,0.9),0 0 45px rgba(255,100,0,0.55);}
+[data-char="itadori"] .char-glow{background:radial-gradient(ellipse at bottom,rgba(150,50,0,0.35) 0%,transparent 70%);}
+[data-char="itadori"] .about-dot{background:#ff6400;box-shadow:0 0 10px rgba(255,100,0,0.6);}
+[data-char="itadori"] .char-tab.active::after{background:#ff6400;}
+[data-char="itadori"] .divider-line{background:linear-gradient(90deg,#ff6400,transparent);}
+[data-char="itadori"] .stat-label{color:#ff8c00;}
+[data-char="itadori"] .grade-text,.grade-icon{color:#ff8c00;}
+[data-char="itadori"] .char-art-placeholder{color:rgba(255,100,0,0.06);}
+
+/* MEGUMI */
+[data-char="megumi"] .char-bg{background:radial-gradient(ellipse 80% 90% at 55% 55%,#0c0820 0%,#060412 45%,#050508 100%);}
+[data-char="megumi"] .char-name-en{text-shadow:2px 2px 0 rgba(0,0,0,0.9),0 0 45px rgba(120,60,255,0.5);}
+[data-char="megumi"] .char-glow{background:radial-gradient(ellipse at bottom,rgba(80,20,180,0.3) 0%,transparent 70%);}
+[data-char="megumi"] .about-dot{background:#7a3cff;box-shadow:0 0 10px rgba(120,60,255,0.6);}
+[data-char="megumi"] .char-tab.active::after{background:#7a3cff;}
+[data-char="megumi"] .divider-line{background:linear-gradient(90deg,#7a3cff,transparent);}
+[data-char="megumi"] .stat-label{color:#9966ff;}
+[data-char="megumi"] .grade-text,.grade-icon{color:#9966ff;}
+[data-char="megumi"] .char-art-placeholder{color:rgba(100,40,255,0.06);}
+
+/* SUKUNA */
+[data-char="sukuna"] .char-bg{background:radial-gradient(ellipse 80% 90% at 55% 55%,#1a0000 0%,#0c0000 45%,#060604 100%);}
+[data-char="sukuna"] .char-name-en{text-shadow:2px 2px 0 rgba(0,0,0,0.9),0 0 50px rgba(200,0,0,0.65);}
+[data-char="sukuna"] .char-glow{background:radial-gradient(ellipse at bottom,rgba(150,0,0,0.4) 0%,transparent 70%);}
+[data-char="sukuna"] .about-dot{background:#cc0000;box-shadow:0 0 12px rgba(200,0,0,0.7);}
+[data-char="sukuna"] .char-tab.active::after{background:#cc0000;}
+[data-char="sukuna"] .divider-line{background:linear-gradient(90deg,#cc0000,transparent);}
+[data-char="sukuna"] .stat-label{color:#cc6600;}
+[data-char="sukuna"] .grade-text,.grade-icon{color:#cc6600;}
+[data-char="sukuna"] .char-art-placeholder{color:rgba(180,0,0,0.07);}
+
+/* TOJI */
+[data-char="toji"] .char-bg{background:radial-gradient(ellipse 80% 90% at 55% 55%,#001c1a 0%,#000e0d 45%,#050608 100%);}
+[data-char="toji"] .char-name-en{text-shadow:2px 2px 0 rgba(0,0,0,0.9),0 0 45px rgba(0,180,160,0.45);}
+[data-char="toji"] .char-glow{background:radial-gradient(ellipse at bottom,rgba(0,120,110,0.3) 0%,transparent 70%);}
+[data-char="toji"] .about-dot{background:#00b4a0;box-shadow:0 0 10px rgba(0,180,160,0.6);}
+[data-char="toji"] .char-tab.active::after{background:#00b4a0;}
+[data-char="toji"] .divider-line{background:linear-gradient(90deg,#00b4a0,transparent);}
+[data-char="toji"] .stat-label{color:#00c4b0;}
+[data-char="toji"] .grade-text,.grade-icon{color:#00c4b0;}
+[data-char="toji"] .char-art-placeholder{color:rgba(0,180,150,0.06);}
+
+/* MOBILE NAV */
+#mob-toggle{display:none;flex-direction:column;gap:4.5px;cursor:pointer;padding:6px;background:none;border:none;}
+#mob-toggle span{width:22px;height:1.5px;background:var(--white);display:block;transition:all 0.3s;}
+#mob-toggle.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px);}
+#mob-toggle.open span:nth-child(2){opacity:0;}
+#mob-toggle.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px);}
+#mob-nav{display:none;position:fixed;top:74px;left:0;right:0;bottom:0;z-index:900;
+  background:rgba(0,0,0,0.97);backdrop-filter:blur(14px);
+  flex-direction:column;align-items:center;justify-content:center;gap:0;}
+#mob-nav.open{display:flex;}
+.mob-nav-link{font-family:var(--font-ui);font-size:0.9rem;letter-spacing:0.45em;
+  color:rgba(255,255,255,0.45);text-transform:uppercase;padding:18px 60px;
+  width:100%;text-align:center;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.04);
+  transition:all 0.25s;}
+.mob-nav-link:hover,.mob-nav-link.active-mob{color:var(--white);background:rgba(255,255,255,0.03);}
+@media(max-width:860px){
+  #mob-toggle{display:flex;}
+  .char-tabs{display:none;}
+  .nav-links-desktop{display:none!important;}
+}
+@media(max-width:640px){
+  .lp{padding:0 16px 0 20px;}
+  .rp{padding:0 20px 0 12px;}
+  .char-name-en{font-size:1.4rem;}
+  .char-bio{font-size:0.65rem;}
+  .stat-value{font-size:0.6rem;}
+}
+
+[data-char="gojo"]{--page-bg:#050d15;}
+[data-char="itadori"]{--page-bg:#0d0500;}
+[data-char="megumi"]{--page-bg:#0a0800;}
+[data-char="sukuna"]{--page-bg:#080000;}
+[data-char="toji"]{--page-bg:#020808;}
+
+[data-char="gojo"]{--art-glow:rgba(0,207,255,0.55);--art-glow2:rgba(0,150,200,0.3);}
+[data-char="itadori"]{--art-glow:rgba(255,80,0,0.6);--art-glow2:rgba(200,20,0,0.35);}
+[data-char="megumi"]{--art-glow:rgba(180,130,0,0.55);--art-glow2:rgba(100,70,0,0.3);}
+[data-char="sukuna"]{--art-glow:rgba(200,0,0,0.6);--art-glow2:rgba(120,0,0,0.35);}
+[data-char="toji"]{--art-glow:rgba(0,180,150,0.55);--art-glow2:rgba(0,110,100,0.3);}
+</style>
+</head>
+<body>
+
+<div id="to"></div>
+
+<nav>
+  <div class="hamburger"><span></span><span></span><span></span></div>
+  <div class="nav-logo">呪術廻戦</div>
+  <div class="nav-links">
+    <a href="#" class="active">Home</a>
+    <a href="#">Characters</a>
+    <a href="#">Help</a>
+  </div>
+  <div class="nav-right">
+    <button class="nav-signup">Sign Up</button>
+    <input class="nav-search" type="text" placeholder="Search...">
+  </div>
+</nav>
+
+<div class="marquee-bar"><div class="marquee-inner" id="mi"></div></div>
+
+<div id="scene">
+
+  <!-- GOJO -->
+  <div class="char-page active" data-char="gojo">
+    <div class="char-bg"></div><div class="char-bg-overlay"></div>
+    <div class="aura-container" id="ac-gojo"></div>
+    <div class="bg-kanji">悟</div>
+    <div class="pc tl"></div><div class="pc tr"></div><div class="pc bl"></div><div class="pc br"></div>
+    <div class="layout">
+      <div class="lp">
+        <div class="grade-badge"><span class="grade-icon">✦</span><span class="grade-text">Special Grade</span></div>
+        <div class="char-title">The Strongest Jujutsu Sorcerer</div>
+        <div class="char-name-en">GOJO SATORU</div>
+        <div class="char-name-jp">（五条 悟）</div>
+        <div class="divider-line"></div>
+        <div class="char-bio">Gojo Satoru is a special grade jujutsu sorcerer and teacher at Tokyo Jujutsu High, known as the strongest sorcerer in the world. His Limitless Technique combined with the Six Eyes makes him virtually untouchable. Arrogant and playful, he cares deeply for his students and protects them fiercely.</div>
+      </div>
+      <div class="cp">
+        <div class="char-art-wrap">
+          <div class="char-glow"></div>
+          <div class="scan-frame" style="width:250px;height:370px;bottom:6%;left:50%;position:absolute;border:1px solid rgba(0,207,255,0.25);">
+            <div class="sc tl" style="top:-1px;left:-1px;color:rgba(0,207,255,0.7)"></div>
+            <div class="sc tr" style="top:-1px;right:-1px;color:rgba(0,207,255,0.7)"></div>
+            <div class="sc bl" style="bottom:-1px;left:-1px;color:rgba(0,207,255,0.7)"></div>
+            <div class="sc br" style="bottom:-1px;right:-1px;color:rgba(0,207,255,0.7)"></div>
+          </div>
+          <!-- =============================== -->
+          <!-- GOJO IMAGE URL — paste your removed-bg image URL below -->
+          <img src="hddCw-removebg-preview.png"
+               class="char-art-img" alt="Gojo Satoru"
+               onerror="this.style.display='none'">
+          <!-- =============================== -->
+        </div>
+      </div>
+      <div class="rp">
+        <div class="about-header"><div class="about-dot"></div><div class="about-title">ABOUT</div></div>
+        <div class="stat-block"><div class="stat-label">Affiliation</div><div class="stat-value">Tokyo Jujutsu High</div></div>
+        <div class="stat-block"><div class="stat-label">Status</div><div class="stat-value">Ally</div></div>
+        <div class="stat-block"><div class="stat-label">Relationships</div><div class="stat-value">Suguru Geto, Utahime, Shoko Ieri, Yuji Itadori</div></div>
+        <div class="stat-block"><div class="stat-label">Skills</div><div class="stat-value">Limitless, Six Eyes, Cursed Technique Reversal</div></div>
+        <div class="stat-block"><div class="stat-label">Troops</div><div class="stat-value">First Year Trio</div></div>
+        <div class="stat-block"><div class="stat-label">Weapons &amp; EQ</div><div class="stat-value">None (Relies on Cursed Techniques)</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ITADORI -->
+  <div class="char-page" data-char="itadori">
+    <div class="char-bg"></div><div class="char-bg-overlay"></div>
+    <div class="aura-container" id="ac-itadori"></div>
+    <div class="bg-kanji">悠</div>
+    <div class="pc tl"></div><div class="pc tr"></div><div class="pc bl"></div><div class="pc br"></div>
+    <div class="layout">
+      <div class="lp">
+        <div class="grade-badge"><span class="grade-icon">✦</span><span class="grade-text">Special Grade</span></div>
+        <div class="char-title">The Vessel of Sukuna</div>
+        <div class="char-name-en">YUJI ITADORI</div>
+        <div class="char-name-jp">（虎杖 悠仁）</div>
+        <div class="divider-line"></div>
+        <div class="char-bio">Yuji Itadori is a first-year student at Tokyo Jujutsu High and vessel for the King of Curses. He possesses superhuman physical ability and has swallowed Sukuna's fingers, becoming one of the most powerful sorcerers in the modern era. Known for his unwavering resolve and compassion, he fights to protect others at great personal cost.</div>
+      </div>
+      <div class="cp">
+        <div class="char-art-wrap">
+          <div class="char-glow"></div>
+          <div class="scan-frame" style="width:250px;height:370px;bottom:6%;left:50%;position:absolute;border:1px solid rgba(255,100,0,0.25);">
+            <div class="sc tl" style="top:-1px;left:-1px;color:rgba(255,100,0,0.7)"></div>
+            <div class="sc tr" style="top:-1px;right:-1px;color:rgba(255,100,0,0.7)"></div>
+            <div class="sc bl" style="bottom:-1px;left:-1px;color:rgba(255,100,0,0.7)"></div>
+            <div class="sc br" style="bottom:-1px;right:-1px;color:rgba(255,100,0,0.7)"></div>
+          </div>
+          <!-- =============================== -->
+          <!-- ITADORI IMAGE URL — paste your removed-bg image URL below -->
+          <img src="5c94d6b2-52c2-4cf5-bb14-00c03964d3e9-removebg-preview.png"
+               class="char-art-img" alt="Yuji Itadori"
+               onerror="this.style.display='none'">
+          <!-- =============================== -->
+        </div>
+      </div>
+      <div class="rp">
+        <div class="about-header"><div class="about-dot"></div><div class="about-title">ABOUT</div></div>
+        <div class="stat-block"><div class="stat-label">Affiliation</div><div class="stat-value">Tokyo Jujutsu High</div></div>
+        <div class="stat-block"><div class="stat-label">Status</div><div class="stat-value">Alive (Vessel)</div></div>
+        <div class="stat-block"><div class="stat-label">Relationships</div><div class="stat-value">Sukuna, Megumi, Nobara, Gojo</div></div>
+        <div class="stat-block"><div class="stat-label">Skills</div><div class="stat-value">Black Flash, Divergent Fist, Cursed Energy Manipulation</div></div>
+        <div class="stat-block"><div class="stat-label">Troops</div><div class="stat-value">Jujutsu Sorcerers</div></div>
+        <div class="stat-block"><div class="stat-label">Weapons &amp; EQ</div><div class="stat-value">Slaughter Demon (Cursed Tool)</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEGUMI -->
+  <div class="char-page" data-char="megumi">
+    <div class="char-bg"></div><div class="char-bg-overlay"></div>
+    <div class="aura-container" id="ac-megumi"></div>
+    <div class="bg-kanji">恵</div>
+    <div class="pc tl"></div><div class="pc tr"></div><div class="pc bl"></div><div class="pc br"></div>
+    <div class="layout">
+      <div class="lp">
+        <div class="grade-badge"><span class="grade-icon">✦</span><span class="grade-text">Special Grade</span></div>
+        <div class="char-title">The Ten Shadows User</div>
+        <div class="char-name-en">MEGUMI FUSHIGURO</div>
+        <div class="char-name-jp">（伏黒 恵）</div>
+        <div class="divider-line"></div>
+        <div class="char-bio">Megumi Fushiguro is a first-year student at Tokyo Jujutsu High and descendant of the Zenin Clan. He uses the Ten Shadows Technique to summon shikigami from his shadows to fight. Currently mastering Divine Dogs and Nue. Serious, analytical, and fiercely protective — Gojo considers him a potential future equal.</div>
+      </div>
+      <div class="cp">
+        <div class="char-art-wrap">
+          <div class="char-glow"></div>
+          <div class="scan-frame" style="width:250px;height:370px;bottom:6%;left:50%;position:absolute;border:1px solid rgba(100,40,255,0.25);">
+            <div class="sc tl" style="top:-1px;left:-1px;color:rgba(120,60,255,0.7)"></div>
+            <div class="sc tr" style="top:-1px;right:-1px;color:rgba(120,60,255,0.7)"></div>
+            <div class="sc bl" style="bottom:-1px;left:-1px;color:rgba(120,60,255,0.7)"></div>
+            <div class="sc br" style="bottom:-1px;right:-1px;color:rgba(120,60,255,0.7)"></div>
+          </div>
+          <!-- =============================== -->
+          <!-- MEGUMI IMAGE URL — paste your removed-bg image URL below -->
+          <img src="tmpzv-removebg-preview.png"
+               class="char-art-img" alt="Megumi Fushiguro"
+               onerror="this.style.display='none'">
+          <!-- =============================== -->
+        </div>
+      </div>
+      <div class="rp">
+        <div class="about-header"><div class="about-dot"></div><div class="about-title">ABOUT</div></div>
+        <div class="stat-block"><div class="stat-label">Affiliation</div><div class="stat-value">Tokyo Jujutsu High</div></div>
+        <div class="stat-block"><div class="stat-label">Status</div><div class="stat-value">Ally (Current)</div></div>
+        <div class="stat-block"><div class="stat-label">Relationships</div><div class="stat-value">Tsumiki Fushiguro, Nobara, Kagisaki, Satoru Gojo</div></div>
+        <div class="stat-block"><div class="stat-label">Skills</div><div class="stat-value">Ten Shadows Technique, Domain Expansion, Cursed Tool Mastery</div></div>
+        <div class="stat-block"><div class="stat-label">Troops</div><div class="stat-value">First Year Trio</div></div>
+        <div class="stat-block"><div class="stat-label">Weapons &amp; EQ</div><div class="stat-value">None (Relies on Cursed Techniques)</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUKUNA -->
+  <div class="char-page" data-char="sukuna">
+    <div class="char-bg"></div><div class="char-bg-overlay"></div>
+    <div class="aura-container" id="ac-sukuna"></div>
+    <div class="bg-kanji">儺</div>
+    <div class="pc tl"></div><div class="pc tr"></div><div class="pc bl"></div><div class="pc br"></div>
+    <div class="layout">
+      <div class="lp">
+        <div class="grade-badge"><span class="grade-icon">✦</span><span class="grade-text">Special Grade</span></div>
+        <div class="char-title">The King of Curses</div>
+        <div class="char-name-en">RYOMEN SUKUNA</div>
+        <div class="char-name-jp">（両面宿儺）</div>
+        <div class="divider-line"></div>
+        <div class="char-bio">Ryomen Sukuna is a legendary Jujutsu Sorcerer from a thousand years ago, known as the undisputed King of Curses. He possesses immense cursed energy and sadistic brilliance. Currently incarnated in the body of Yuji Itadori, manipulating events toward his full resurrection and absolute dominance over all.</div>
+      </div>
+      <div class="cp">
+        <div class="char-art-wrap">
+          <div class="char-glow"></div>
+          <div class="scan-frame" style="width:250px;height:370px;bottom:6%;left:50%;position:absolute;border:1px solid rgba(180,0,0,0.3);">
+            <div class="sc tl" style="top:-1px;left:-1px;color:rgba(200,0,0,0.8)"></div>
+            <div class="sc tr" style="top:-1px;right:-1px;color:rgba(200,0,0,0.8)"></div>
+            <div class="sc bl" style="bottom:-1px;left:-1px;color:rgba(200,0,0,0.8)"></div>
+            <div class="sc br" style="bottom:-1px;right:-1px;color:rgba(200,0,0,0.8)"></div>
+          </div>
+          <!-- =============================== -->
+          <!-- SUKUNA IMAGE URL — paste your removed-bg image URL below -->
+          <img src="JzSUz-removebg-preview.png"
+               class="char-art-img" alt="Ryomen Sukuna"
+               onerror="this.style.display='none'">
+          <!-- =============================== -->
+        </div>
+      </div>
+      <div class="rp">
+        <div class="about-header"><div class="about-dot"></div><div class="about-title">ABOUT</div></div>
+        <div class="stat-block"><div class="stat-label">Era</div><div class="stat-value">Heian Period (Incarnated)</div></div>
+        <div class="stat-block"><div class="stat-label">Ally</div><div class="stat-value">None</div></div>
+        <div class="stat-block"><div class="stat-label">Relationships</div><div class="stat-value">Yuji Itadori (Vessel), Uraume (Servant)</div></div>
+        <div class="stat-block"><div class="stat-label">Skills</div><div class="stat-value">Malevolent Shrine, Cleave &amp; Dismantle, Domain Expansion</div></div>
+        <div class="stat-block"><div class="stat-label">Troops</div><div class="stat-value">Cursed Spirits</div></div>
+        <div class="stat-block"><div class="stat-label">Weapons &amp; EQ</div><div class="stat-value">Cursed Tools (Kamutoke, Hitton)</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOJI -->
+  <div class="char-page" data-char="toji">
+    <div class="char-bg"></div><div class="char-bg-overlay"></div>
+    <div class="aura-container" id="ac-toji"></div>
+    <div class="bg-kanji">甚</div>
+    <div class="pc tl"></div><div class="pc tr"></div><div class="pc bl"></div><div class="pc br"></div>
+    <div class="layout">
+      <div class="lp">
+        <div class="grade-badge"><span class="grade-icon">◆</span><span class="grade-text">Semi-Grade 1</span></div>
+        <div class="char-title">The Sorcerer Killer</div>
+        <div class="char-name-en">TOJI FUSHIGURO</div>
+        <div class="char-name-jp">（伏黒 甚爾）</div>
+        <div class="divider-line"></div>
+        <div class="char-bio">Toji Fushiguro is a former member of the Zenin Clan and a non-curse user known as the "Sorcerer Killer." He possesses superhuman physical ability, compensated through a parasitic cursed spirit and masterful use of cursed tools. A formidable assassin who can overpower even Special Grade sorcerers through sheer physical dominance.</div>
+      </div>
+      <div class="cp">
+        <div class="char-art-wrap">
+          <div class="char-glow"></div>
+          <div class="scan-frame" style="width:250px;height:370px;bottom:6%;left:50%;position:absolute;border:1px solid rgba(0,180,150,0.22);">
+            <div class="sc tl" style="top:-1px;left:-1px;color:rgba(0,200,180,0.6)"></div>
+            <div class="sc tr" style="top:-1px;right:-1px;color:rgba(0,200,180,0.6)"></div>
+            <div class="sc bl" style="bottom:-1px;left:-1px;color:rgba(0,200,180,0.6)"></div>
+            <div class="sc br" style="bottom:-1px;right:-1px;color:rgba(0,200,180,0.6)"></div>
+          </div>
+          <!-- =============================== -->
+          <!-- TOJI IMAGE URL — paste your removed-bg image URL below -->
+          <img src="5deaf680-46d5-4984-901a-0f203c6fa1a5-removebg-preview.png"
+               class="char-art-img" alt="Toji Fushiguro"
+               onerror="this.style.display='none'">
+          <!-- =============================== -->
+        </div>
+      </div>
+      <div class="rp">
+        <div class="about-header"><div class="about-dot"></div><div class="about-title">ABOUT</div></div>
+        <div class="stat-block"><div class="stat-label">Affiliation</div><div class="stat-value">Former Zenin Clan</div></div>
+        <div class="stat-block"><div class="stat-label">Relationships</div><div class="stat-value">Megumi Fushiguro (Son)</div></div>
+        <div class="stat-block"><div class="stat-label">Techniques</div><div class="stat-value">Heavenly Restriction, Innate Body, Master of Cursed Tools</div></div>
+        <div class="stat-block"><div class="stat-label">Skills</div><div class="stat-value">Superhuman Strength, Speed, Cursed Tool Mastery, None (No Cursed Energy)</div></div>
+        <div class="stat-block"><div class="stat-label">Troops</div><div class="stat-value">None</div></div>
+        <div class="stat-block"><div class="stat-label">Weapons &amp; EQ</div><div class="stat-value">Playful Cloud, Inverted Spear of Heaven, Split Soul Katana</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TABS -->
+<div id="mob-nav">
+  <div class="mob-nav-link active-mob" onclick="switchChar('gojo');closeMob()">Gojo Satoru <span style="opacity:0.3;margin-left:8px">五条 悟</span></div>
+  <div class="mob-nav-link" onclick="switchChar('itadori');closeMob()">Yuji Itadori <span style="opacity:0.3;margin-left:8px">虎杖 悠仁</span></div>
+  <div class="mob-nav-link" onclick="switchChar('megumi');closeMob()">Megumi Fushiguro <span style="opacity:0.3;margin-left:8px">伏黒 恵</span></div>
+  <div class="mob-nav-link" onclick="switchChar('sukuna');closeMob()">Ryomen Sukuna <span style="opacity:0.3;margin-left:8px">両面宿儺</span></div>
+  <div class="mob-nav-link" onclick="switchChar('toji');closeMob()">Toji Fushiguro <span style="opacity:0.3;margin-left:8px">伏黒 甚爾</span></div>
+  <div style="margin-top:28px;font-family:var(--font-jp);font-size:0.65rem;color:rgba(255,255,255,0.12);letter-spacing:0.5em;">呪術廻戦 — CURSED ARCHIVE</div>
+</div>
+<div class="char-tabs">
+  <button class="char-tab active" data-target="gojo"><span class="tab-name">Gojo Satoru</span><span class="tab-jp">五条 悟</span></button>
+  <button class="char-tab" data-target="itadori"><span class="tab-name">Yuji Itadori</span><span class="tab-jp">虎杖 悠仁</span></button>
+  <button class="char-tab" data-target="megumi"><span class="tab-name">Megumi Fushiguro</span><span class="tab-jp">伏黒 恵</span></button>
+  <button class="char-tab" data-target="sukuna"><span class="tab-name">Ryomen Sukuna</span><span class="tab-jp">両面宿儺</span></button>
+  <button class="char-tab" data-target="toji"><span class="tab-name">Toji Fushiguro</span><span class="tab-jp">伏黒 甚爾</span></button>
+</div>
+
+<script>
+// Marquee
+const mtexts=['呪術廻戦','JUJUTSU KAISEN','呪霊祓除','CURSED SPIRIT EXORCISM','領域展開','DOMAIN EXPANSION','虚式','HOLLOW TECHNIQUE','悪鬼羅刹','KING OF CURSES','十種影法術','TEN SHADOWS'];
+const mi=document.getElementById('mi');
+for(let r=0;r<3;r++) mtexts.forEach(t=>{const s=document.createElement('span');s.textContent=t;mi.appendChild(s);});
+
+// Aura configs
+const auraData={
+  gojo:{cols:['rgba(0,207,255,0.9)','rgba(0,150,255,0.7)','rgba(100,230,255,0.5)'],streakCol:'rgba(0,207,255,0.5)',swirlCol:'rgba(0,207,255,0.15)'},
+  itadori:{cols:['rgba(255,100,0,0.9)','rgba(255,50,0,0.7)','rgba(255,180,50,0.6)'],streakCol:'rgba(255,100,0,0.5)',swirlCol:'rgba(255,100,0,0.15)'},
+  megumi:{cols:['rgba(130,60,255,0.9)','rgba(80,20,220,0.7)','rgba(180,100,255,0.5)'],streakCol:'rgba(120,60,255,0.5)',swirlCol:'rgba(100,40,255,0.15)'},
+  sukuna:{cols:['rgba(200,20,0,0.9)','rgba(180,0,0,0.8)','rgba(255,60,0,0.5)'],streakCol:'rgba(200,0,0,0.6)',swirlCol:'rgba(180,0,0,0.18)'},
+  toji:{cols:['rgba(0,200,180,0.8)','rgba(0,150,140,0.6)','rgba(0,255,220,0.4)'],streakCol:'rgba(0,200,180,0.4)',swirlCol:'rgba(0,180,150,0.12)'},
+};
+
+// Spawn particles
+function spawnParticles(charId){
+  const c=document.getElementById(`ac-${charId}`); if(!c) return;
+  const cols=auraData[charId].cols;
+  c.innerHTML='';
+  for(let i=0;i<55;i++){
+    const p=document.createElement('div'); p.className='ap';
+    const sz=Math.random()*3+0.6; const dx=(Math.random()-0.5)*220;
+    p.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;bottom:${Math.random()*12}%;background:${cols[Math.floor(Math.random()*cols.length)]};--dx:${dx}px;animation-duration:${Math.random()*8+5}s;animation-delay:${Math.random()*7}s;box-shadow:0 0 ${sz*5}px currentColor;`;
+    c.appendChild(p);
+  }
+  // Add swirls
+  const sc2=auraData[charId].swirlCol;
+  for(let i=0;i<3;i++){
+    const s=document.createElement('div'); s.className='swirl';
+    const sz=Math.random()*300+150; const dur1=Math.random()*25+18; const dur2=Math.random()*3+2;
+    s.style.cssText=`width:${sz}px;height:${sz}px;left:${20+Math.random()*60}%;top:${10+Math.random()*60}%;transform:translate(-50%,-50%);border-color:${sc2};animation-duration:${dur1}s,${dur2}s;`;
+    c.appendChild(s);
+  }
+}
+Object.keys(auraData).forEach(id=>spawnParticles(id));
+
+// Streak spawner
+let streakInterval=null;
+function spawnStreak(page){
+  if(!page.classList.contains('active')) return;
+  const charId=page.dataset.char;
+  const col=auraData[charId]?.streakCol||'rgba(255,255,255,0.3)';
+  const s=document.createElement('div'); s.className='streak';
+  s.style.cssText=`top:${Math.random()*100}%;left:${Math.random()*25}%;width:${Math.random()*30+12}%;transform:rotate(${(Math.random()-0.5)*12}deg);background:linear-gradient(90deg,transparent,${col},transparent);animation-duration:${Math.random()*1.5+1}s;`;
+  page.appendChild(s);
+  setTimeout(()=>s.remove(),2600);
+}
+function startStreaks(page){
+  if(streakInterval) clearInterval(streakInterval);
+  streakInterval=setInterval(()=>spawnStreak(page),2000);
+  spawnStreak(page);
+}
+startStreaks(document.querySelector('.char-page.active'));
+
+// Tab switching
+const tabs=document.querySelectorAll('.char-tab');
+const pages=document.querySelectorAll('.char-page');
+const overlay=document.getElementById('to');
+let current='gojo';
+
+tabs.forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    const target=tab.dataset.target;
+    if(target===current) return;
+    overlay.classList.add('flash');
+    setTimeout(()=>{
+      pages.forEach(p=>p.classList.remove('active'));
+      tabs.forEach(t=>t.classList.remove('active'));
+      const tp=document.querySelector(`[data-char="${target}"]`);
+      tp.classList.add('active'); tab.classList.add('active');
+      current=target;
+      startStreaks(tp);
+      overlay.classList.remove('flash');
+    },150);
+  });
+});
+
+// Arrow key navigation
+const order=['gojo','itadori','megumi','sukuna','toji'];
+document.addEventListener('keydown',e=>{
+  const idx=order.indexOf(current);
+  if(e.key==='ArrowRight'&&idx<order.length-1) document.querySelector(`[data-target="${order[idx+1]}"]`).click();
+  else if(e.key==='ArrowLeft'&&idx>0) document.querySelector(`[data-target="${order[idx-1]}"]`).click();
+});
+
+function toggleMob(){
+  document.getElementById('mob-toggle').classList.toggle('open');
+  document.getElementById('mob-nav').classList.toggle('open');
+}
+function closeMob(){
+  document.getElementById('mob-toggle').classList.remove('open');
+  document.getElementById('mob-nav').classList.remove('open');
+  // update active
+  document.querySelectorAll('.mob-nav-link').forEach((l,i)=>{
+    const chars=['gojo','itadori','megumi','sukuna','toji'];
+    l.classList.toggle('active-mob',chars[i]===currentChar);
+  });
+}
+</script>
+</body>
+</html>
